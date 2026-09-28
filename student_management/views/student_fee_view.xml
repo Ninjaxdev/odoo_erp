@@ -1,0 +1,45 @@
+<odoo>
+    <data>
+        <record id="view_student_fee_form" model="ir.ui.view">
+            <field name="name">student.fee.form</field>
+            <field name="model">student.fee</field>
+            <field name="arch" type="xml">
+              <form string="Student Fee">
+                  <sheet>
+                      <group>
+                          <field name="student_name"/>
+                          <field name="course"/>
+                          <field name="course_fee"/>
+                          <field name="discount"/>
+                          <field name="final_fees" readonly="1"/>
+                      </group>
+                  </sheet>
+              </form>
+            </field>
+        </record>
+        <record id="view_student_fee_tree" model="ir.ui.view">
+            <field name="name">student.fee.tree</field>
+            <field name="model">student.fee</field>
+            <field name="arch" type="xml">
+             <tree>
+                 <field name="student_name"/>
+                 <field name="course"/>
+                 <field name="final_fees"/>
+             </tree>
+            </field>
+        </record>
+        <record id="action_student_fee" model="ir.actions.act_window">
+           <field name="name">Student Fees</field>
+           <field name="res_model">student.fee</field>
+           <field name="view_mode">tree,form</field>
+       </record>
+        <menuitem id="menu_student_fee_root" name="Student Fee"/> <!--creates menu at top-->
+        <menuitem id="menu_student_fee"
+          name="Fees"
+          parent="menu_student_fee_root"
+          action="action_student_fee"/>  <!-- create sub menu-->
+
+
+
+    </data>
+</odoo>

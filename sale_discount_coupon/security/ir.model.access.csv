@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sale_coupon_user,sale.coupon.user,model_sale_coupon,sales_team.group_sale_salesman,1,1,1,0
+access_sale_coupon_manager,sale.coupon.manager,model_sale_coupon,sales_team.group_sale_manager,1,1,1,1
+access_sale_discount_rule_user,sale.discount.rule.user,model_sale_discount_rule,sales_team.group_sale_salesman,1,0,0,0
+access_sale_discount_rule_manager,sale.discount.rule.manager,model_sale_discount_rule,sales_team.group_sale_manager,1,1,1,1

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Default Loss Types -->
+        <record id="loss_type_crop" model="yield.loss.type">
+            <field name="name">Crop Loss</field>
+            <field name="code">CROP</field>
+            <field name="sequence">10</field>
+            <field name="category">crop_loss</field>
+            <field name="description">Material lost during rolling/cropping operations. Includes head and tail crops.</field>
+            <field name="auto_scrap" eval="True"/>
+        </record>
+
+        <record id="loss_type_scale" model="yield.loss.type">
+            <field name="name">Scale Loss</field>
+            <field name="code">SCALE</field>
+            <field name="sequence">20</field>
+            <field name="category">scale_loss</field>
+            <field name="description">Oxidation scale formed during furnace heating. Weight lost as iron oxide.</field>
+            <field name="auto_scrap" eval="True"/>
+        </record>
+
+        <record id="loss_type_offspec" model="yield.loss.type">
+            <field name="name">Off-Spec Rejection</field>
+            <field name="code">OFFSPEC</field>
+            <field name="sequence">30</field>
+            <field name="category">off_spec</field>
+            <field name="description">Material rejected due to not meeting quality specifications (dimensional, surface, mechanical).</field>
+            <field name="auto_scrap" eval="True"/>
+        </record>
+
+        <record id="loss_type_trim" model="yield.loss.type">
+            <field name="name">Trim / Cut Loss</field>
+            <field name="code">TRIM</field>
+            <field name="sequence">40</field>
+            <field name="category">trim_loss</field>
+            <field name="description">Material lost during trimming, cutting, and shearing operations.</field>
+            <field name="auto_scrap" eval="True"/>
+        </record>
+
+        <record id="loss_type_handling" model="yield.loss.type">
+            <field name="name">Handling Loss</field>
+            <field name="code">HNDL</field>
+            <field name="sequence">50</field>
+            <field name="category">handling_loss</field>
+            <field name="description">Material lost or damaged during handling, transportation, and storage.</field>
+            <field name="auto_scrap" eval="False"/>
+        </record>
+
+        <record id="loss_type_cobble" model="yield.loss.type">
+            <field name="name">Cobble / Jam Loss</field>
+            <field name="code">COBBLE</field>
+            <field name="sequence">60</field>
+            <field name="category">other</field>
+            <field name="description">Material lost due to mill cobbles or equipment jams during rolling.</field>
+            <field name="auto_scrap" eval="True"/>
+        </record>
+
+        <!-- Default Process Steps -->
+        <record id="step_reheating" model="process.step">
+            <field name="name">Reheating Furnace</field>
+            <field name="code">REHEAT</field>
+            <field name="sequence">10</field>
+            <field name="expected_yield_pct">98.5</field>
+            <field name="tolerance_pct">1.0</field>
+            <field name="description">Reheating of billets/blooms in furnace. Primary loss: scale formation.</field>
+            <field name="loss_type_ids" eval="[(6, 0, [ref('loss_type_scale')])]"/>
+        </record>
+
+        <record id="step_roughing" model="process.step">
+            <field name="name">Roughing Mill</field>
+            <field name="code">ROUGH</field>
+            <field name="sequence">20</field>
+            <field name="expected_yield_pct">96.0</field>
+            <field name="tolerance_pct">2.0</field>
+            <field name="description">Initial rolling to reduce cross-section. Losses: crop, scale, cobbles.</field>
+            <field name="loss_type_ids" eval="[(6, 0, [ref('loss_type_crop'), ref('loss_type_scale'), ref('loss_type_cobble')])]"/>
+        </record>
+
+        <record id="step_intermediate" model="process.step">
+            <field name="name">Intermediate Mill</field>
+            <field name="code">INTER</field>
+            <field name="sequence">30</field>
+            <field name="expected_yield_pct">97.5</field>
+            <field name="tolerance_pct">1.5</field>
+            <field name="description">Intermediate rolling passes for further reduction.</field>
+            <field name="loss_type_ids" eval="[(6, 0, [ref('loss_type_crop'), ref('loss_type_cobble')])]"/>
+        </record>
+
+        <record id="step_finishing" model="process.step">
+            <field name="name">Finishing Mill</field>
+            <field name="code">FINISH</field>
+            <field name="sequence">40</field>
+            <field name="expected_yield_pct">98.0</field>
+            <field name="tolerance_pct">1.0</field>
+            <field name="description">Final rolling to achieve target dimensions and surface finish.</field>
+            <field name="loss_type_ids" eval="[(6, 0, [ref('loss_type_crop'), ref('loss_type_trim')])]"/>
+        </record>
+
+        <record id="step_cutting" model="process.step">
+            <field name="name">Cutting / Shearing</field>
+            <field name="code">CUT</field>
+            <field name="sequence">50</field>
+            <field name="expected_yield_pct">99.0</field>
+            <field name="tolerance_pct">0.5</field>
+            <field name="description">Cutting to length. Losses: end crops, trim.</field>
+            <field name="loss_type_ids" eval="[(6, 0, [ref('loss_type_trim'), ref('loss_type_crop')])]"/>
+        </record>
+
+        <record id="step_inspection" model="process.step">
+            <field name="name">Quality Inspection</field>
+            <field name="code">QC</field>
+            <field name="sequence">60</field>
+            <field name="expected_yield_pct">99.5</field>
+            <field name="tolerance_pct">1.0</field>
+            <field name="description">Quality inspection and testing. Losses: off-spec rejections.</field>
+            <field name="loss_type_ids" eval="[(6, 0, [ref('loss_type_offspec')])]"/>
+        </record>
+
+    </data>
+</odoo>

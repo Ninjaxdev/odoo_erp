@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Discount Rule Tree View -->
+    <record id="view_sale_discount_rule_tree" model="ir.ui.view">
+        <field name="name">sale.discount.rule.tree</field>
+        <field name="model">sale.discount.rule</field>
+        <field name="arch" type="xml">
+            <tree string="Discount Rules">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="rule_type"/>
+                <field name="discount_type"/>
+                <field name="discount_value"/>
+                <field name="min_order_amount"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="coupon_count"/>
+                <field name="priority"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Discount Rule Form View -->
+    <record id="view_sale_discount_rule_form" model="ir.ui.view">
+        <field name="name">sale.discount.rule.form</field>
+        <field name="model">sale.discount.rule</field>
+        <field name="arch" type="xml">
+            <form string="Discount Rule">
+                <header>
+                    <button name="action_generate_coupon" string="Generate Coupon"
+                            type="object" class="btn-primary" icon="fa-ticket"/>
+                    <button name="action_view_coupons" string="View Coupons"
+                            type="object" class="btn-secondary"
+                            attrs="{'invisible': [('coupon_count', '=', 0)]}"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_coupons" type="object"
+                                class="oe_stat_button" icon="fa-ticket">
+                            <field name="coupon_count" widget="statinfo" string="Coupons"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                            attrs="{'invisible': [('active', '=', True)]}"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Rule Name..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Rule Configuration">
+                            <field name="rule_type"/>
+                            <field name="discount_type"/>
+                            <field name="discount_value"/>
+                            <field name="max_discount_amount"
+                                   attrs="{'invisible': [('discount_type', '!=', 'percentage')]}"/>
+                            <field name="priority"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                        </group>
+                        <group string="Validity Period">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+
+                    <!-- Order Amount Conditions -->
+                    <group string="Order Amount Conditions"
+                           attrs="{'invisible': [('rule_type', '!=', 'order_amount')]}">
+                        <field name="min_order_amount"/>
+                        <field name="max_order_amount"/>
+                    </group>
+
+                    <!-- Customer Conditions -->
+                    <group string="Customer Conditions"
+                           attrs="{'invisible': [('rule_type', '!=', 'customer')]}">
+                        <field name="applicable_customer_ids" nolabel="1"
+                               widget="many2many_tags"/>
+                    </group>
+
+                    <!-- Customer Category Conditions -->
+                    <group string="Customer Category Conditions"
+                           attrs="{'invisible': [('rule_type', '!=', 'customer_category')]}">
+                        <field name="applicable_customer_category_ids" nolabel="1"
+                               widget="many2many_tags"/>
+                    </group>
+
+                    <!-- Product Conditions -->
+                    <group string="Product Conditions"
+                           attrs="{'invisible': [('rule_type', '!=', 'product')]}">
+                        <field name="applicable_product_ids" nolabel="1"
+                               widget="many2many_tags"/>
+                        <field name="applicable_product_category_ids" widget="many2many_tags"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" placeholder="Describe this rule..."/>
+                        </page>
+                        <page string="Generated Coupons">
+                            <field name="coupon_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="state"/>
+                                    <field name="used_count"/>
+                                    <field name="expiry_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Discount Rule Search View -->
+    <record id="view_sale_discount_rule_search" model="ir.ui.view">
+        <field name="name">sale.discount.rule.search</field>
+        <field name="model">sale.discount.rule</field>
+        <field name="arch" type="xml">
+            <search string="Search Discount Rules">
+                <field name="name"/>
+                <filter string="Active" name="active" domain="[('active','=',True)]"/>
+                <filter string="Archived" name="archived" domain="[('active','=',False)]"/>
+                <separator/>
+                <filter string="Order Amount Rules" name="order_amount"
+                        domain="[('rule_type','=','order_amount')]"/>
+                <filter string="Customer Rules" name="customer"
+                        domain="[('rule_type','=','customer')]"/>
+                <filter string="Product Rules" name="product"
+                        domain="[('rule_type','=','product')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Rule Type" name="group_rule_type"
+                            context="{'group_by': 'rule_type'}"/>
+                    <filter string="Discount Type" name="group_discount_type"
+                            context="{'group_by': 'discount_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Discount Rule Action -->
+    <record id="action_sale_discount_rule" model="ir.actions.act_window">
+        <field name="name">Discount Rules</field>
+        <field name="res_model">sale.discount.rule</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_sale_discount_rule_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first discount rule!
+            </p>
+            <p>
+                Set up rules to automatically apply discounts based on order amount,
+                customer type, or products ordered.
+            </p>
+        </field>
+    </record>
+
+</odoo>

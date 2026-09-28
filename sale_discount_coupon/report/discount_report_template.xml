@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_sale_discount_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Header -->
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <h2>Sales Discount Report</h2>
+                                <h3 t-field="o.name"/>
+                            </div>
+                        </div>
+                        <hr/>
+
+                        <!-- Order Info -->
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Order Date:</strong></td>
+                                        <td><span t-field="o.date_order" t-options='{"widget": "date"}'/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Customer:</strong></td>
+                                        <td><span t-field="o.partner_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sales Person:</strong></td>
+                                        <td><span t-field="o.user_id"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Coupon Applied:</strong></td>
+                                        <td>
+                                            <span t-if="o.coupon_applied" style="color: green;">Yes</span>
+                                            <span t-if="not o.coupon_applied" style="color: red;">No</span>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="o.coupon_id">
+                                        <td><strong>Coupon Code:</strong></td>
+                                        <td><span t-field="o.coupon_id.code"/></td>
+                                    </tr>
+                                    <tr t-if="o.discount_rule_id">
+                                        <td><strong>Discount Rule:</strong></td>
+                                        <td><span t-field="o.discount_rule_id.name"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Order Lines -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h4>Order Lines</h4>
+                                <table class="table table-bordered table-sm">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Product</th>
+                                            <th class="text-right">Qty</th>
+                                            <th class="text-right">Unit Price</th>
+                                            <th class="text-right">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="o.order_line" t-as="line">
+                                            <td>
+                                                <span t-field="line.name"/>
+                                                <span t-if="line.is_coupon_discount_line"
+                                                      class="badge badge-success ml-1">Coupon Discount</span>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="line.product_uom_qty"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="line.price_unit"
+                                                      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="line.price_subtotal"
+                                                      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Discount Summary -->
+                        <div class="row mt-4">
+                            <div class="col-6 offset-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Subtotal (Before Discount):</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_untaxed"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="o.coupon_discount_amount">
+                                        <td style="color: green;"><strong>Coupon Discount:</strong></td>
+                                        <td class="text-right" style="color: green;">
+                                            - <span t-field="o.coupon_discount_amount"
+                                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="o.discount_rule_amount">
+                                        <td style="color: blue;"><strong>Rule Discount:</strong></td>
+                                        <td class="text-right" style="color: blue;">
+                                            - <span t-field="o.discount_rule_amount"
+                                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="o.total_discount_amount">
+                                        <td><strong>Total Discount:</strong></td>
+                                        <td class="text-right">
+                                            <strong>
+                                                - <span t-field="o.total_discount_amount"
+                                                        t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tax:</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_tax"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-top">
+                                        <td><strong>Total:</strong></td>
+                                        <td class="text-right">
+                                            <strong>
+                                                <span t-field="o.amount_total"
+                                                      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="o.total_discount_amount" class="table-success">
+                                        <td><strong>Amount After All Discounts:</strong></td>
+                                        <td class="text-right">
+                                            <strong>
+                                                <span t-field="o.amount_after_discount"
+                                                      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Coupon Details Box -->
+                        <div class="row mt-4" t-if="o.coupon_id">
+                            <div class="col-12">
+                                <div class="alert alert-success">
+                                    <h5>Coupon Details</h5>
+                                    <table class="table table-sm mb-0">
+                                        <tr>
+                                            <td><strong>Coupon Name:</strong></td>
+                                            <td><span t-field="o.coupon_id.name"/></td>
+                                            <td><strong>Code:</strong></td>
+                                            <td><span t-field="o.coupon_id.code"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Discount Type:</strong></td>
+                                            <td><span t-field="o.coupon_id.discount_type"/></td>
+                                            <td><strong>Discount Value:</strong></td>
+                                            <td><span t-field="o.coupon_id.discount_value"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Valid Until:</strong></td>
+                                            <td><span t-field="o.coupon_id.expiry_date"/></td>
+                                            <td><strong>Savings:</strong></td>
+                                            <td>
+                                                <span t-field="o.coupon_discount_amount"
+                                                      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Note -->
+                        <div class="row mt-4">
+                            <div class="col-12 text-center text-muted">
+                                <small>Generated by Smart Sales Discount &amp; Coupon Management System - EOXS</small>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

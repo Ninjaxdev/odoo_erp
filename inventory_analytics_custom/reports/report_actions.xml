@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Yield Tracking PDF Report Action -->
+    <record id="action_report_yield_tracking" model="ir.actions.report">
+        <field name="name">Yield Tracking Report</field>
+        <field name="model">yield.tracking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">inventory_analytics_custom.report_yield_tracking</field>
+        <field name="report_file">inventory_analytics_custom.report_yield_tracking</field>
+        <field name="print_report_name">'Yield Tracking - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_yield_tracking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- COPQ Report PDF Action -->
+    <record id="action_report_copq" model="ir.actions.report">
+        <field name="name">COPQ Report</field>
+        <field name="model">copq.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">inventory_analytics_custom.report_copq</field>
+        <field name="report_file">inventory_analytics_custom.report_copq</field>
+        <field name="print_report_name">'COPQ Report - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_copq_report"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Yield Analysis Wizard: Form View -->
+    <record id="view_yield_analysis_wizard_form" model="ir.ui.view">
+        <field name="name">yield.analysis.wizard.form</field>
+        <field name="model">yield.analysis.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Yield Analysis">
+                <group>
+                    <group string="Period">
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <group string="Options">
+                        <field name="group_by"/>
+                        <field name="report_type"/>
+                        <field name="state_filter"/>
+                    </group>
+                </group>
+                <group string="Filters (Optional)">
+                    <field name="product_ids" widget="many2many_tags"/>
+                    <field name="process_step_ids" widget="many2many_tags"/>
+                    <field name="material_grade" placeholder="e.g. SS304"/>
+                </group>
+                <footer>
+                    <button name="action_analyze" string="Analyze Yield"
+                            type="object" class="btn-primary"/>
+                    <button name="action_generate_copq" string="Generate COPQ Report"
+                            type="object" class="btn-secondary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Yield Analysis Wizard: Action -->
+    <record id="action_yield_analysis_wizard" model="ir.actions.act_window">
+        <field name="name">Yield Analysis</field>
+        <field name="res_model">yield.analysis.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Add wizard to menu -->
+    <menuitem id="menu_yield_analysis_wizard"
+              name="Yield Analysis Wizard"
+              parent="menu_yield_reporting"
+              action="action_yield_analysis_wizard"
+              sequence="5"/>
+
+</odoo>

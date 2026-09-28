@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Dashboard Action: Yield Tracking Pivot (by Grade) -->
+    <record id="action_yield_by_grade_pivot" model="ir.actions.act_window">
+        <field name="name">Yield by Grade</field>
+        <field name="res_model">yield.tracking</field>
+        <field name="view_mode">pivot,graph,tree</field>
+        <field name="domain">[('state', 'in', ['confirmed', 'done'])]</field>
+        <field name="context">{
+            'search_default_group_grade': 1,
+            'search_default_group_step': 1,
+        }</field>
+    </record>
+
+    <!-- Dashboard Action: Yield Tracking Graph (Loss Trend) -->
+    <record id="action_yield_loss_trend" model="ir.actions.act_window">
+        <field name="name">Loss Trend</field>
+        <field name="res_model">yield.tracking</field>
+        <field name="view_mode">graph,pivot,tree</field>
+        <field name="domain">[('state', 'in', ['confirmed', 'done'])]</field>
+        <field name="context">{
+            'search_default_group_date': 1,
+        }</field>
+    </record>
+
+    <!-- Dashboard Action: Scrap from Yield -->
+    <record id="action_scrap_from_yield" model="ir.actions.act_window">
+        <field name="name">Yield-Generated Scrap</field>
+        <field name="res_model">stock.scrap</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('is_auto_generated', '=', True)]</field>
+    </record>
+
+</odoo>

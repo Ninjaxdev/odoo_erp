@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend MRP Production: Form View -->
+    <record id="view_mrp_production_form_inherit" model="ir.ui.view">
+        <field name="name">mrp.production.form.yield</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <!-- Add stat buttons -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_yield_trackings" type="object"
+                        class="oe_stat_button" icon="fa-line-chart"
+                        attrs="{'invisible': [('yield_tracking_count', '=', 0)]}">
+                    <field name="yield_tracking_count" widget="statinfo"
+                           string="Yield Records"/>
+                </button>
+            </xpath>
+            <!-- Add yield information page in notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Yield Analysis" name="yield_analysis">
+                    <group>
+                        <group string="Yield Metrics">
+                            <field name="total_yield_pct" string="Overall Yield (%)"/>
+                            <field name="total_loss_qty"/>
+                            <field name="total_loss_cost"/>
+                            <field name="yield_status"/>
+                        </group>
+                        <group string="Actions">
+                            <button name="action_create_yield_tracking"
+                                    string="&#128203; New Yield Tracking"
+                                    type="object" class="btn-primary"
+                                    attrs="{'invisible': [('state', 'in', ['draft', 'cancel'])]}"/>
+                        </group>
+                    </group>
+                    <field name="yield_tracking_ids" readonly="1">
+                        <tree string="Yield Tracking Records"
+                              decoration-danger="yield_status == 'critical'"
+                              decoration-warning="yield_status == 'warning'"
+                              decoration-success="yield_status == 'good'">
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="process_step_id"/>
+                            <field name="input_qty"/>
+                            <field name="output_qty"/>
+                            <field name="loss_qty"/>
+                            <field name="actual_yield_pct" string="Yield %"/>
+                            <field name="yield_variance" string="Variance %"/>
+                            <field name="total_loss_cost"/>
+                            <field name="yield_status"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

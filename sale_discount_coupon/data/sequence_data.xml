@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Coupon Discount Product -->
+    <record id="product_discount_coupon" model="product.product">
+        <field name="name">Coupon Discount</field>
+        <field name="type">service</field>
+        <field name="sale_ok">True</field>
+        <field name="purchase_ok">False</field>
+        <field name="list_price">0.0</field>
+        <field name="description_sale">Discount applied via coupon code</field>
+    </record>
+
+</odoo>

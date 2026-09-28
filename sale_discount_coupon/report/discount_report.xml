@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_sale_discount_report" model="ir.actions.report">
+        <field name="name">Discount Report</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sale_discount_coupon.report_sale_discount_template</field>
+        <field name="report_file">sale_discount_coupon.report_sale_discount_template</field>
+        <field name="print_report_name">'Discount Report - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend Product Template: Form View -->
+    <record id="view_product_template_form_inherit" model="ir.ui.view">
+        <field name="name">product.template.form.yield</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_yield_trackings" type="object"
+                        class="oe_stat_button" icon="fa-bar-chart"
+                        attrs="{'invisible': [('yield_tracking_count', '=', 0)]}">
+                    <field name="yield_tracking_count" widget="statinfo"
+                           string="Yield Records"/>
+                </button>
+            </xpath>
+            <xpath expr="//page[@name='general_information']//group" position="after">
+                <group string="Yield &amp; Grade Information">
+                    <group>
+                        <field name="material_grade"/>
+                        <field name="theoretical_yield_pct" string="Theoretical Yield (%)"/>
+                    </group>
+                    <group>
+                        <field name="avg_actual_yield_pct" string="Avg Actual Yield (%)"/>
+                        <field name="yield_adjusted_cost"/>
+                        <button name="action_recompute_yield_cost"
+                                string="&#128260; Recompute Yield Cost"
+                                type="object" class="btn-link"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_yield_loss_type_user,yield.loss.type.user,model_yield_loss_type,group_yield_user,1,0,0,0
+access_yield_loss_type_manager,yield.loss.type.manager,model_yield_loss_type,group_yield_manager,1,1,1,1
+access_process_step_user,process.step.user,model_process_step,group_yield_user,1,0,0,0
+access_process_step_manager,process.step.manager,model_process_step,group_yield_manager,1,1,1,1
+access_yield_tracking_user,yield.tracking.user,model_yield_tracking,group_yield_user,1,1,1,0
+access_yield_tracking_manager,yield.tracking.manager,model_yield_tracking,group_yield_manager,1,1,1,1
+access_yield_tracking_loss_line_user,yield.tracking.loss.line.user,model_yield_tracking_loss_line,group_yield_user,1,1,1,0
+access_yield_tracking_loss_line_manager,yield.tracking.loss.line.manager,model_yield_tracking_loss_line,group_yield_manager,1,1,1,1
+access_copq_report_user,copq.report.user,model_copq_report,group_yield_user,1,0,0,0
+access_copq_report_manager,copq.report.manager,model_copq_report,group_yield_manager,1,1,1,1
+access_copq_report_line_user,copq.report.line.user,model_copq_report_line,group_yield_user,1,0,0,0
+access_copq_report_line_manager,copq.report.line.manager,model_copq_report_line,group_yield_manager,1,1,1,1
+access_copq_report_summary_user,copq.report.summary.user,model_copq_report_summary,group_yield_user,1,0,0,0
+access_copq_report_summary_manager,copq.report.summary.manager,model_copq_report_summary,group_yield_manager,1,1,1,1
+access_yield_analysis_wizard_user,yield.analysis.wizard.user,model_yield_analysis_wizard,group_yield_user,1,1,1,0
+access_yield_analysis_wizard_manager,yield.analysis.wizard.manager,model_yield_analysis_wizard,group_yield_manager,1,1,1,1

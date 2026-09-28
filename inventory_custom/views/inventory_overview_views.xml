@@ -1,0 +1,40 @@
+<odoo>
+    <data>
+        <record id="view_picking_form_inherit_custom" model="ir.ui.view">
+            <field name="name">stock.picking.form.custom</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                   <group string="Extra Info">
+                       <field name="custom_note"/>
+                   </group>
+                </xpath>
+            </field>
+        </record>
+
+       <record id="view_stock_move_inherit_mark_important" model="ir.ui.view">
+            <field name="name">stock.move.tree.mark.important</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_picking_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree/field[last()]" position="after">
+                    <field name="mark_important" string="Mark Important" attrs="{'invisible': [('state', '=', 'done')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+       <record id="view_picking_type_kanban_inherit_custom" model="ir.ui.view">
+            <field name="name">stock.picking.type.kanban.custom</field>
+            <field name="model">stock.picking.type</field>
+            <field name="inherit_id" ref="stock.stock_picking_type_kanban"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[contains(@class, 'o_kanban_manage_button_section')]" position="inside">
+                    <button type="object" name="action_custom_button" class="btn btn-link">
+                        Custom Action
+                    </button>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

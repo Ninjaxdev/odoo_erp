@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend Stock Scrap: Tree View -->
+    <record id="view_stock_scrap_tree_inherit" model="ir.ui.view">
+        <field name="name">stock.scrap.tree.yield</field>
+        <field name="model">stock.scrap</field>
+        <field name="inherit_id" ref="stock.stock_scrap_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="yield_tracking_id"/>
+                <field name="loss_type_id"/>
+                <separator/>
+                <filter string="Auto-Generated" name="auto_generated"
+                        domain="[('is_auto_generated', '=', True)]"/>
+                <filter string="From Yield Tracking" name="from_yield"
+                        domain="[('yield_tracking_id', '!=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Loss Type" name="group_loss_type"
+                            context="{'group_by': 'loss_type_id'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend Stock Scrap: Form View -->
+    <record id="view_stock_scrap_form_inherit" model="ir.ui.view">
+        <field name="name">stock.scrap.form.yield</field>
+        <field name="model">stock.scrap</field>
+        <field name="inherit_id" ref="stock.stock_scrap_form_view2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="inside">
+                <field name="yield_tracking_id" readonly="1"/>
+                <field name="loss_type_id"/>
+                <field name="is_auto_generated" readonly="1"/>
+                <field name="material_grade" readonly="1"/>
+                <field name="loss_cost" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Dashboard Form View -->
+    <record id="view_coupon_dashboard_form" model="ir.ui.view">
+        <field name="name">coupon.dashboard.form</field>
+        <field name="model">sale.coupon</field>
+        <field name="arch" type="xml">
+            <graph string="Coupon Usage" type="bar">
+                <field name="state"/>
+                <field name="used_count" type="measure"/>
+                <field name="total_discount_given" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Coupon Graph View -->
+    <record id="view_sale_coupon_graph" model="ir.ui.view">
+        <field name="name">sale.coupon.graph</field>
+        <field name="model">sale.coupon</field>
+        <field name="arch" type="xml">
+            <graph string="Coupon Statistics" type="bar">
+                <field name="state" type="row"/>
+                <field name="used_count" type="measure"/>
+                <field name="total_discount_given" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Coupon Pivot View -->
+    <record id="view_sale_coupon_pivot" model="ir.ui.view">
+        <field name="name">sale.coupon.pivot</field>
+        <field name="model">sale.coupon</field>
+        <field name="arch" type="xml">
+            <pivot string="Coupon Analysis">
+                <field name="discount_type" type="row"/>
+                <field name="state" type="col"/>
+                <field name="used_count" type="measure"/>
+                <field name="total_discount_given" type="measure"/>
+                <field name="total_orders" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Dashboard Action -->
+    <record id="action_coupon_dashboard" model="ir.actions.act_window">
+        <field name="name">Coupon Dashboard</field>
+        <field name="res_model">sale.coupon</field>
+        <field name="view_mode">graph,pivot,tree,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Sale Order Graph for Discounts -->
+    <record id="view_sale_order_discount_graph" model="ir.ui.view">
+        <field name="name">sale.order.discount.graph</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <graph string="Discount Analysis" type="bar">
+                <field name="partner_id" type="row"/>
+                <field name="coupon_discount_amount" type="measure"/>
+                <field name="amount_total" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_sale_discount_analysis" model="ir.actions.act_window">
+        <field name="name">Discount Analysis</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">graph,pivot,tree</field>
+        <field name="domain">[('coupon_applied', '=', True)]</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

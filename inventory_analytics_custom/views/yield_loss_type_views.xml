@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Yield Loss Type: Tree View -->
+    <record id="view_yield_loss_type_tree" model="ir.ui.view">
+        <field name="name">yield.loss.type.tree</field>
+        <field name="model">yield.loss.type</field>
+        <field name="arch" type="xml">
+            <tree string="Loss Types">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="auto_scrap"/>
+                <field name="expense_account_id"/>
+                <field name="active" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Yield Loss Type: Form View -->
+    <record id="view_yield_loss_type_form" model="ir.ui.view">
+        <field name="name">yield.loss.type.form</field>
+        <field name="model">yield.loss.type</field>
+        <field name="arch" type="xml">
+            <form string="Loss Type">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Loss Type Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="category"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="auto_scrap"/>
+                            <field name="scrap_location_id"
+                                   attrs="{'invisible': [('auto_scrap', '=', False)]}"/>
+                            <field name="expense_account_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Description of this loss type..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Yield Loss Type: Search View -->
+    <record id="view_yield_loss_type_search" model="ir.ui.view">
+        <field name="name">yield.loss.type.search</field>
+        <field name="model">yield.loss.type</field>
+        <field name="arch" type="xml">
+            <search string="Loss Types">
+                <field name="name"/>
+                <field name="code"/>
+                <filter string="Crop Loss" name="crop_loss"
+                        domain="[('category', '=', 'crop_loss')]"/>
+                <filter string="Scale Loss" name="scale_loss"
+                        domain="[('category', '=', 'scale_loss')]"/>
+                <filter string="Off-Spec" name="off_spec"
+                        domain="[('category', '=', 'off_spec')]"/>
+                <filter string="Trim Loss" name="trim_loss"
+                        domain="[('category', '=', 'trim_loss')]"/>
+                <separator/>
+                <filter string="Auto-Scrap Enabled" name="auto_scrap"
+                        domain="[('auto_scrap', '=', True)]"/>
+                <separator/>
+                <filter string="Archived" name="inactive"
+                        domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="group_category"
+                            context="{'group_by': 'category'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Yield Loss Type: Action -->
+    <record id="action_yield_loss_type" model="ir.actions.act_window">
+        <field name="name">Loss Types</field>
+        <field name="res_model">yield.loss.type</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_yield_loss_type_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define your first loss type
+            </p>
+            <p>
+                Loss types categorize different kinds of material losses
+                (crop loss, scale loss, off-spec rejection, etc.)
+            </p>
+        </field>
+    </record>
+
+</odoo>

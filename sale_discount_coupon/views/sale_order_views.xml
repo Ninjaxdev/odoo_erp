@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inherit Sale Order Form View -->
+    <record id="view_sale_order_form_inherit_coupon" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.coupon</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Add coupon section before order lines -->
+            <xpath expr="//field[@name='order_line']" position="before">
+                <field name="coupon_applied" invisible="1"/>
+                <div class="o_coupon_section" style="margin-bottom: 15px;">
+                    <group string="Coupon &amp; Discount">
+                        <group>
+                            <div class="o_row" attrs="{'invisible': [('coupon_applied', '=', True)]}">
+                                <field name="coupon_code" placeholder="Enter coupon code..."
+                                       class="o_input" style="width: 200px;"/>
+                                <button name="action_apply_coupon" string="Apply Coupon"
+                                        type="object" class="btn-primary btn-sm ml-2"
+                                        attrs="{'invisible': [('state', 'not in', ['draft', 'sent'])]}"/>
+                            </div>
+                            <div attrs="{'invisible': [('coupon_applied', '=', False)]}">
+                                <span class="badge badge-success">
+                                    Coupon Applied: <field name="coupon_id" readonly="1" nolabel="1"/>
+                                </span>
+                                <button name="action_remove_coupon" string="Remove"
+                                        type="object" class="btn-link text-danger btn-sm"
+                                        attrs="{'invisible': [('state', 'not in', ['draft', 'sent'])]}"/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="discount_rule_id" readonly="1"
+                                   attrs="{'invisible': [('discount_rule_id', '=', False)]}"/>
+                        </group>
+                    </group>
+                </div>
+            </xpath>
+
+            <!-- Add discount summary before total -->
+            <xpath expr="//field[@name='amount_total']" position="after">
+                <field name="coupon_discount_amount" widget="monetary"
+                       options="{'currency_field': 'currency_id'}"
+                       attrs="{'invisible': [('coupon_discount_amount', '=', 0)]}"/>
+                <field name="discount_rule_amount" widget="monetary"
+                       options="{'currency_field': 'currency_id'}"
+                       attrs="{'invisible': [('discount_rule_amount', '=', 0)]}"/>
+                <field name="total_discount_amount" widget="monetary"
+                       options="{'currency_field': 'currency_id'}"
+                       attrs="{'invisible': [('total_discount_amount', '=', 0)]}"/>
+                <field name="amount_after_discount" widget="monetary"
+                       options="{'currency_field': 'currency_id'}"
+                       attrs="{'invisible': [('total_discount_amount', '=', 0)]}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Inherit Sale Order Tree View -->
+    <record id="view_sale_order_tree_inherit_coupon" model="ir.ui.view">
+        <field name="name">sale.order.tree.inherit.coupon</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <field name="amount_total" position="after">
+                <field name="coupon_discount_amount"/>
+                <field name="coupon_applied"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Sales Orders with Coupons Action -->
+    <record id="action_sale_orders_with_coupon" model="ir.actions.act_window">
+        <field name="name">Orders with Coupons</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('coupon_applied', '=', True)]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No orders with coupons yet!
+            </p>
+        </field>
+    </record>
+
+</odoo>

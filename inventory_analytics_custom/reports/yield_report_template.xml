@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_yield_tracking">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Header -->
+                        <h2 style="color: #2c3e50;">Yield Tracking Report</h2>
+                        <h3><t t-esc="doc.name"/></h3>
+                        <hr style="border-top: 2px solid #3498db;"/>
+
+                        <!-- General Information -->
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td><strong>Date:</strong></td>
+                                        <td><t t-esc="doc.date" t-options="{'widget': 'date'}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Manufacturing Order:</strong></td>
+                                        <td><t t-esc="doc.production_id.name or '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Process Step:</strong></td>
+                                        <td><t t-esc="doc.process_step_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Product:</strong></td>
+                                        <td><t t-esc="doc.product_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Material Grade:</strong></td>
+                                        <td><t t-esc="doc.material_grade or '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Lot/Serial:</strong></td>
+                                        <td><t t-esc="doc.lot_id.name or '-'"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <!-- Yield Summary Box -->
+                                <div style="border: 2px solid #2c3e50; border-radius: 8px; padding: 15px; background-color: #f8f9fa;">
+                                    <h4 style="color: #2c3e50; margin-bottom: 10px;">Yield Summary</h4>
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td><strong>Input Qty:</strong></td>
+                                            <td class="text-right">
+                                                <t t-esc="'%.2f' % doc.input_qty"/>
+                                                <t t-esc="doc.uom_id.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Output Qty:</strong></td>
+                                            <td class="text-right">
+                                                <t t-esc="'%.2f' % doc.output_qty"/>
+                                                <t t-esc="doc.uom_id.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr style="color: #e74c3c;">
+                                            <td><strong>Loss Qty:</strong></td>
+                                            <td class="text-right">
+                                                <t t-esc="'%.2f' % doc.loss_qty"/>
+                                                <t t-esc="doc.uom_id.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr><td colspan="2"><hr style="margin: 5px 0;"/></td></tr>
+                                        <tr>
+                                            <td><strong>Theoretical Yield:</strong></td>
+                                            <td class="text-right"><t t-esc="'%.2f%%' % doc.theoretical_yield_pct"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Actual Yield:</strong></td>
+                                            <td class="text-right">
+                                                <span t-attf-style="color: #{doc.yield_status == 'critical' and '#e74c3c' or doc.yield_status == 'warning' and '#f39c12' or '#27ae60'}; font-weight: bold;">
+                                                    <t t-esc="'%.2f%%' % doc.actual_yield_pct"/>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Variance:</strong></td>
+                                            <td class="text-right">
+                                                <span t-attf-style="color: #{doc.yield_variance &lt; 0 and '#e74c3c' or '#27ae60'};">
+                                                    <t t-esc="'%+.2f%%' % doc.yield_variance"/>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cost Information -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h4 style="color: #2c3e50;">Cost Impact</h4>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Unit Cost:</strong></td>
+                                        <td><t t-esc="'%.2f' % doc.unit_cost"/></td>
+                                        <td><strong>Total Input Cost:</strong></td>
+                                        <td><t t-esc="'%.2f' % doc.total_input_cost"/></td>
+                                        <td><strong>Total Loss Cost:</strong></td>
+                                        <td style="color: #e74c3c; font-weight: bold;">
+                                            <t t-esc="'%.2f' % doc.total_loss_cost"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Loss Breakdown -->
+                        <t t-if="doc.loss_line_ids">
+                            <h4 style="color: #2c3e50; margin-top: 20px;">Loss Breakdown</h4>
+                            <table class="table table-sm table-bordered">
+                                <thead style="background-color: #2c3e50; color: white;">
+                                    <tr>
+                                        <th>Loss Type</th>
+                                        <th>Category</th>
+                                        <th class="text-right">Loss Qty</th>
+                                        <th class="text-right">Loss %</th>
+                                        <th class="text-right">Loss Cost</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.loss_line_ids" t-as="line">
+                                        <tr>
+                                            <td><t t-esc="line.loss_type_id.name"/></td>
+                                            <td><t t-esc="line.loss_category"/></td>
+                                            <td class="text-right"><t t-esc="'%.2f' % line.loss_qty"/></td>
+                                            <td class="text-right"><t t-esc="'%.2f%%' % line.loss_pct"/></td>
+                                            <td class="text-right" style="color: #e74c3c;">
+                                                <t t-esc="'%.2f' % line.loss_cost"/>
+                                            </td>
+                                            <td><t t-esc="line.notes or ''"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                                <tfoot style="font-weight: bold; background-color: #ecf0f1;">
+                                    <tr>
+                                        <td colspan="2">Total</td>
+                                        <td class="text-right"><t t-esc="'%.2f' % doc.loss_qty"/></td>
+                                        <td class="text-right">
+                                            <t t-esc="'%.2f%%' % (sum(doc.loss_line_ids.mapped('loss_pct')))"/>
+                                        </td>
+                                        <td class="text-right" style="color: #e74c3c;">
+                                            <t t-esc="'%.2f' % doc.total_loss_cost"/>
+                                        </td>
+                                        <td/>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </t>
+
+                        <!-- Notes -->
+                        <t t-if="doc.notes">
+                            <h4 style="color: #2c3e50; margin-top: 20px;">Notes</h4>
+                            <p><t t-esc="doc.notes"/></p>
+                        </t>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

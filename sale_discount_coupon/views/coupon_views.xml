@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Coupon Tree View -->
+    <record id="view_sale_coupon_tree" model="ir.ui.view">
+        <field name="name">sale.coupon.tree</field>
+        <field name="model">sale.coupon</field>
+        <field name="arch" type="xml">
+            <tree string="Coupons" decoration-success="state=='active'"
+                  decoration-danger="state=='expired'"
+                  decoration-muted="state=='exhausted'"
+                  decoration-info="state=='draft'">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="discount_type"/>
+                <field name="discount_value"/>
+                <field name="start_date"/>
+                <field name="expiry_date"/>
+                <field name="used_count"/>
+                <field name="usage_limit"/>
+                <field name="total_orders"/>
+                <field name="total_discount_given" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Coupon Form View -->
+    <record id="view_sale_coupon_form" model="ir.ui.view">
+        <field name="name">sale.coupon.form</field>
+        <field name="model">sale.coupon</field>
+        <field name="arch" type="xml">
+            <form string="Coupon">
+                <header>
+                    <button name="action_activate" string="Activate"
+                            type="object" class="btn-primary"
+                            attrs="{'invisible': [('state', 'not in', ['draft'])]}"/>
+                    <button name="action_expire" string="Expire"
+                            type="object" class="btn-warning"
+                            attrs="{'invisible': [('state', 'not in', ['active'])]}"/>
+                    <button name="action_reset_draft" string="Reset to Draft"
+                            type="object"
+                            attrs="{'invisible': [('state', 'not in', ['expired', 'exhausted'])]}"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,expired"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_coupons" type="object"
+                                class="oe_stat_button" icon="fa-shopping-cart"
+                                attrs="{'invisible': [('total_orders', '=', 0)]}">
+                            <field name="total_orders" widget="statinfo" string="Orders"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Coupon Name..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Coupon Details">
+                            <field name="code"/>
+                            <button name="action_generate_code" string="Generate Code"
+                                    type="object" class="btn-secondary btn-sm"/>
+                            <field name="discount_type"/>
+                            <field name="discount_value"/>
+                            <field name="max_discount_amount"
+                                   attrs="{'invisible': [('discount_type', '!=', 'percentage')]}"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                        </group>
+                        <group string="Validity">
+                            <field name="start_date"/>
+                            <field name="expiry_date"/>
+                            <field name="min_order_amount"/>
+                            <field name="is_one_time_use"/>
+                            <field name="usage_limit"
+                                   attrs="{'invisible': [('is_one_time_use', '=', True)]}"/>
+                            <field name="used_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Applicable Customers">
+                            <field name="applicable_customer_ids" nolabel="1"
+                                   widget="many2many_tags"/>
+                        </group>
+                        <group string="Applicable Products">
+                            <field name="applicable_product_ids" nolabel="1"
+                                   widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Statistics">
+                            <field name="total_orders" readonly="1"/>
+                            <field name="total_discount_given" widget="monetary"
+                                   options="{'currency_field': 'currency_id'}" readonly="1"/>
+                        </group>
+                        <group string="Linked Rule">
+                            <field name="discount_rule_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" placeholder="Add description..."/>
+                        </page>
+                        <page string="Applied Orders">
+                            <field name="sale_order_ids" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="date_order"/>
+                                    <field name="amount_total"/>
+                                    <field name="coupon_discount_amount"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Coupon Search View -->
+    <record id="view_sale_coupon_search" model="ir.ui.view">
+        <field name="name">sale.coupon.search</field>
+        <field name="model">sale.coupon</field>
+        <field name="arch" type="xml">
+            <search string="Search Coupons">
+                <field name="name"/>
+                <field name="code"/>
+                <filter string="Active" name="active" domain="[('state','=','active')]"/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Expired" name="expired" domain="[('state','=','expired')]"/>
+                <filter string="Exhausted" name="exhausted" domain="[('state','=','exhausted')]"/>
+                <separator/>
+                <filter string="One Time Use" name="one_time" domain="[('is_one_time_use','=',True)]"/>
+                <filter string="Percentage Discount" name="percentage"
+                        domain="[('discount_type','=','percentage')]"/>
+                <filter string="Fixed Discount" name="fixed"
+                        domain="[('discount_type','=','fixed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Discount Type" name="group_type"
+                            context="{'group_by': 'discount_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Coupon Kanban View -->
+    <record id="view_sale_coupon_kanban" model="ir.ui.view">
+        <field name="name">sale.coupon.kanban</field>
+        <field name="model">sale.coupon</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" default_group_by="state">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="discount_type"/>
+                <field name="discount_value"/>
+                <field name="state"/>
+                <field name="expiry_date"/>
+                <field name="used_count"/>
+                <field name="total_discount_given"/>
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <div class="o_kanban_record_body">
+                                <strong><field name="name"/></strong>
+                                <div class="text-muted">
+                                    Code: <field name="code"/>
+                                </div>
+                                <div>
+                                    <span t-if="record.discount_type.raw_value == 'percentage'">
+                                        <field name="discount_value"/>% Off
+                                    </span>
+                                    <span t-if="record.discount_type.raw_value == 'fixed'">
+                                        <field name="discount_value"/> Off
+                                    </span>
+                                </div>
+                                <div class="text-muted small">
+                                    Expires: <field name="expiry_date"/>
+                                </div>
+                                <div>
+                                    Used: <field name="used_count"/> times
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <field name="state" widget="label_selection"
+                                           options="{'classes': {
+                                               'active': 'success',
+                                               'expired': 'danger',
+                                               'draft': 'info',
+                                               'exhausted': 'warning'
+                                           }}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Coupon Action -->
+    <record id="action_sale_coupon" model="ir.actions.act_window">
+        <field name="name">Coupons</field>
+        <field name="res_model">sale.coupon</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="search_view_id" ref="view_sale_coupon_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first coupon!
+            </p>
+            <p>
+                Create coupon codes to offer discounts to your customers on sales orders.
+            </p>
+        </field>
+    </record>
+
+</odoo>

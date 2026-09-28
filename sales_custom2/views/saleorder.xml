@@ -1,0 +1,74 @@
+<odoo>
+    <data>
+       <record id="sale_order_payment_tab_view" model="ir.ui.view">
+            <field name="name">sale.order.payment.tab</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+             <field name="arch" type="xml">
+
+        <!-- Hide original Payment Terms field -->
+        <xpath expr="//field[@name='payment_term_id'][1]" position="attributes">
+            <attribute name="invisible">1</attribute>
+        </xpath>
+
+        <!-- Add Payment tab after Customer Signature -->
+        <xpath expr="//page[@name='customer_signature']" position="after">
+
+            <page string="Payment" name="payment_info">
+
+                <group string="Payment Information">
+
+                    <field name="payment_term_id"
+                           options="{'no_open':True,'no_create': True}"/>
+
+                </group>
+            </page>
+        </xpath>
+     </field>
+      </record>
+
+    <record id="sale_order_form_inherit_wizard" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.wizard</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+         <xpath expr="//button[@id='action_confirm']"
+               position="attributes">
+            <attribute name="name">open_confirm_wizard</attribute>
+        </xpath>
+
+        <!-- Confirm button in Draft state -->
+        <xpath expr="//button[@name='action_confirm'][not(@id)]"
+               position="attributes">
+            <attribute name="name">open_confirm_wizard</attribute>
+        </xpath>
+        </field>
+    </record>
+      <!-- adding customer related dates -->
+        <record id="sale_order_form_view_v2" model="ir.ui.view">
+            <field name="name">sale.order.form.view.v2</field>
+            <field name="model">sale.order</field>
+             <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+
+                           <field name="invoice_address"/>
+                           <field name="delivery_address"/>
+                           <field name="shipping"/>
+
+                </xpath>
+                <xpath expr="//field[@name='date_order']" position="after">
+
+                          <field name="validity_date"/>
+                           <field name="delivery_date"/>
+                           <field name="so_ship_date"/>
+                           <field name="customer_po"/>
+                           <field name="payment_term_id"/>
+                           <field name="incoterm"/>
+
+                </xpath>
+            </field>
+
+        </record>
+    </data>
+</odoo>

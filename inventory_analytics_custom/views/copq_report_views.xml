@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- COPQ Report: Tree View -->
+    <record id="view_copq_report_tree" model="ir.ui.view">
+        <field name="name">copq.report.tree</field>
+        <field name="model">copq.report</field>
+        <field name="arch" type="xml">
+            <tree string="COPQ Reports"
+                  decoration-danger="copq_percentage > 10"
+                  decoration-warning="copq_percentage > 5">
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="record_count"/>
+                <field name="total_input_qty"/>
+                <field name="total_loss_qty"/>
+                <field name="total_loss_cost" sum="Total"/>
+                <field name="copq_percentage" string="COPQ %"/>
+                <field name="avg_yield_pct" string="Avg Yield %"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- COPQ Report: Form View -->
+    <record id="view_copq_report_form" model="ir.ui.view">
+        <field name="name">copq.report.form</field>
+        <field name="model">copq.report</field>
+        <field name="arch" type="xml">
+            <form string="Cost of Poor Quality Report">
+                <header>
+                    <button name="action_generate" string="Generate Report"
+                            type="object" states="draft" class="btn-primary"/>
+                    <button name="action_reset_draft" string="Reset to Draft"
+                            type="object" states="generated"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,generated"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Period &amp; Filters">
+                            <field name="date_from"
+                                   attrs="{'readonly': [('state', '=', 'generated')]}"/>
+                            <field name="date_to"
+                                   attrs="{'readonly': [('state', '=', 'generated')]}"/>
+                            <field name="product_ids" widget="many2many_tags"
+                                   attrs="{'readonly': [('state', '=', 'generated')]}"/>
+                            <field name="process_step_ids" widget="many2many_tags"
+                                   attrs="{'readonly': [('state', '=', 'generated')]}"/>
+                            <field name="material_grade"
+                                   attrs="{'readonly': [('state', '=', 'generated')]}"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Summary"
+                               attrs="{'invisible': [('state', '=', 'draft')]}">
+                            <field name="record_count"/>
+                            <field name="total_input_qty"/>
+                            <field name="total_output_qty"/>
+                            <field name="total_loss_qty" class="text-danger"/>
+                            <field name="total_input_cost"/>
+                            <field name="total_loss_cost" class="text-danger"/>
+                            <field name="copq_percentage" string="COPQ (%)"
+                                   class="text-danger"/>
+                            <field name="avg_yield_pct"/>
+                        </group>
+                    </group>
+
+                    <notebook attrs="{'invisible': [('state', '=', 'draft')]}">
+                        <page string="Summary by Loss Type" name="summary">
+                            <field name="summary_ids">
+                                <tree string="Loss Type Summary"
+                                      decoration-danger="copq_contribution_pct > 30">
+                                    <field name="loss_type_id"/>
+                                    <field name="loss_category"/>
+                                    <field name="total_loss_qty"/>
+                                    <field name="total_loss_cost" sum="Total"/>
+                                    <field name="occurrence_count"/>
+                                    <field name="copq_contribution_pct"
+                                           string="COPQ Contribution %"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Detail Lines" name="detail_lines">
+                            <field name="line_ids">
+                                <tree string="Detail Lines"
+                                      decoration-danger="yield_variance &lt; -5"
+                                      decoration-warning="yield_variance &lt; 0">
+                                    <field name="date"/>
+                                    <field name="yield_tracking_id"/>
+                                    <field name="production_id"/>
+                                    <field name="product_id"/>
+                                    <field name="material_grade"/>
+                                    <field name="process_step_id"/>
+                                    <field name="input_qty"/>
+                                    <field name="output_qty"/>
+                                    <field name="loss_qty"/>
+                                    <field name="actual_yield_pct" string="Yield %"/>
+                                    <field name="theoretical_yield_pct" string="Expected %"/>
+                                    <field name="yield_variance" string="Variance %"/>
+                                    <field name="loss_cost" sum="Total Loss Cost"/>
+                                    <field name="copq_pct" string="COPQ %"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"
+                                   placeholder="Notes and recommendations for pricing adjustments..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- COPQ Report: Search View -->
+    <record id="view_copq_report_search" model="ir.ui.view">
+        <field name="name">copq.report.search</field>
+        <field name="model">copq.report</field>
+        <field name="arch" type="xml">
+            <search string="COPQ Reports">
+                <field name="name"/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Generated" name="generated"
+                        domain="[('state', '=', 'generated')]"/>
+                <separator/>
+                <filter string="High COPQ (&gt;5%)" name="high_copq"
+                        domain="[('copq_percentage', '>', 5)]"/>
+                <filter string="Critical COPQ (&gt;10%)" name="critical_copq"
+                        domain="[('copq_percentage', '>', 10)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- COPQ Report: Action -->
+    <record id="action_copq_report" model="ir.actions.act_window">
+        <field name="name">COPQ Reports</field>
+        <field name="res_model">copq.report</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_copq_report_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Cost of Poor Quality report
+            </p>
+            <p>
+                COPQ reports aggregate yield losses into cost reports that
+                feed directly into pricing decisions. Select a date range,
+                filter by products or process steps, and generate.
+            </p>
+        </field>
+    </record>
+
+</odoo>

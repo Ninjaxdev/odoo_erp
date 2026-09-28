@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--                    TOP-LEVEL MENU                             -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_yield_management_root"
+              name="Yield Management"
+              web_icon="inventory_analytics_custom,static/description/icon.png"
+              sequence="45"/>
+
+    <!-- ============================================================ -->
+    <!--                    OPERATIONS MENU                            -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_yield_operations"
+              name="Operations"
+              parent="menu_yield_management_root"
+              sequence="10"/>
+
+    <menuitem id="menu_yield_tracking"
+              name="Yield Tracking"
+              parent="menu_yield_operations"
+              action="action_yield_tracking"
+              sequence="10"/>
+
+    <menuitem id="menu_yield_tracking_critical"
+              name="Critical Yield Issues"
+              parent="menu_yield_operations"
+              action="action_yield_tracking_critical"
+              sequence="20"/>
+
+    <menuitem id="menu_scrap_from_yield"
+              name="Auto-Generated Scrap"
+              parent="menu_yield_operations"
+              action="action_scrap_from_yield"
+              sequence="30"/>
+
+    <!-- ============================================================ -->
+    <!--                    REPORTING MENU                             -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_yield_reporting"
+              name="Reporting"
+              parent="menu_yield_management_root"
+              sequence="20"/>
+
+    <menuitem id="menu_copq_report"
+              name="COPQ Reports"
+              parent="menu_yield_reporting"
+              action="action_copq_report"
+              sequence="10"/>
+
+    <menuitem id="menu_yield_by_grade"
+              name="Yield by Grade"
+              parent="menu_yield_reporting"
+              action="action_yield_by_grade_pivot"
+              sequence="20"/>
+
+    <menuitem id="menu_yield_loss_trend"
+              name="Loss Trend"
+              parent="menu_yield_reporting"
+              action="action_yield_loss_trend"
+              sequence="30"/>
+
+    <!-- ============================================================ -->
+    <!--                    CONFIGURATION MENU                         -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_yield_configuration"
+              name="Configuration"
+              parent="menu_yield_management_root"
+              groups="group_yield_manager"
+              sequence="90"/>
+
+    <menuitem id="menu_process_steps"
+              name="Process Steps"
+              parent="menu_yield_configuration"
+              action="action_process_step"
+              sequence="10"/>
+
+    <menuitem id="menu_loss_types"
+              name="Loss Types"
+              parent="menu_yield_configuration"
+              action="action_yield_loss_type"
+              sequence="20"/>
+
+</odoo>

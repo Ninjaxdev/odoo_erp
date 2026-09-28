@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+          <record id="view_steel_product_form" model="ir.ui.view">
+            <field name="name">steel.factory.form</field>
+            <field name="model">steel_product</field>
+            <field name="arch" type="xml">
+                <form string="steel record">
+                    <sheet>
+                        <group>
+                            <field name="company_name"/>
+                            <field name="quantity"/>
+                            <field name="type_of_product"/>
+                            <field name="price"/>
+                            <field name="discount"/>
+                            <field name="total_price" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_steel_product_tree" model="ir.ui.view">
+            <field name="name">steel.factory.tree</field>
+            <field name="model">steel_product</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="company_name"/>
+                    <field name="quantity"/>
+                    <field name="type_of_product"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_steel_product" model="ir.actions.act_window">
+            <field name="name">Steel Product</field>
+            <field name="res_model">steel_product</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="menu_steel_product_root" name="Steel Product"/>
+        <menuitem id="menu_steel_product" name="product" parent="menu_steel_product_root" action="action_steel_product"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,59 @@
+<odoo>
+    <data>
+
+        <!-- ✅ STEP 1: Define Views first -->
+        <record id="student_form_view" model="ir.ui.view">
+            <field name="name">student.form</field>
+            <field name="model">student.record</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="age"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="student_tree_view" model="ir.ui.view">
+            <field name="name">student.tree</field>
+            <field name="model">student.record</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="age"/>
+                    <field name="email"/>
+                    <field name="phone"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ✅ STEP 2: Define Action BEFORE menuitems -->
+        <record id="student_action" model="ir.actions.act_window">
+            <field name="name">Students</field>
+            <field name="res_model">student.record</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- ✅ STEP 3: Now define menuitems AFTER action -->
+        <menuitem id="student_menu_root"
+                  name="Students"
+                  sequence="10"/>
+
+        <menuitem id="student_menu"
+                  name="Student Records"
+                  parent="student_menu_root"
+                  sequence="10"/>
+
+        <menuitem id="student_action_menu"
+                  name="Records"
+                  parent="student_menu"
+                  action="student_action"
+                  sequence="10"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Main Menu -->
+    <menuitem id="menu_sale_discount_coupon_root"
+              name="Coupons &amp; Discounts"
+              parent="sale.sale_menu_root"
+              sequence="25"/>
+
+    <!-- Coupons Sub-menu -->
+    <menuitem id="menu_sale_coupon"
+              name="Coupons"
+              parent="menu_sale_discount_coupon_root"
+              action="action_sale_coupon"
+              sequence="10"/>
+
+    <!-- Discount Rules Sub-menu -->
+    <menuitem id="menu_sale_discount_rule"
+              name="Discount Rules"
+              parent="menu_sale_discount_coupon_root"
+              action="action_sale_discount_rule"
+              sequence="20"/>
+
+    <!-- Orders with Coupons -->
+    <menuitem id="menu_sale_orders_with_coupon"
+              name="Orders with Coupons"
+              parent="menu_sale_discount_coupon_root"
+              action="action_sale_orders_with_coupon"
+              sequence="30"/>
+
+    <!-- Dashboard -->
+    <menuitem id="menu_coupon_dashboard"
+              name="Coupon Analysis"
+              parent="menu_sale_discount_coupon_root"
+              action="action_coupon_dashboard"
+              sequence="40"/>
+
+    <!-- Discount Analysis -->
+    <menuitem id="menu_discount_analysis"
+              name="Discount Analysis"
+              parent="menu_sale_discount_coupon_root"
+              action="action_sale_discount_analysis"
+              sequence="50"/>
+
+</odoo>

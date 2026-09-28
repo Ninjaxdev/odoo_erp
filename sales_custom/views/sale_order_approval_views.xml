@@ -1,0 +1,25 @@
+<odoo>
+    <data>
+        <record id="view_sale_order_approval_form" model="ir.ui.view">
+           <field name="name">sale.order.approval.form</field>
+            <field name="model">sale.order.approval</field>
+           <field name="arch" type="xml">
+               <form string="Approval">
+                  <sheet>
+                    <group>
+                       <field name="approve"/>
+                     </group>
+
+                    <footer>
+                       <button name="action_confirm_approval"
+                            type="object"
+                            string="Confirm"
+                            class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                    </footer>
+                  </sheet>
+               </form>
+            </field>
+         </record>
+     </data>
+</odoo>

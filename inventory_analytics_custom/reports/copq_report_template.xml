@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_copq">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Header -->
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <h2 style="color: #2c3e50; margin-bottom: 5px;">
+                                Cost of Poor Quality (COPQ) Report
+                            </h2>
+                            <h3 style="color: #7f8c8d;">
+                                <t t-esc="doc.name"/>
+                            </h3>
+                            <p style="color: #95a5a6;">
+                                Period: <t t-esc="doc.date_from" t-options="{'widget': 'date'}"/>
+                                to <t t-esc="doc.date_to" t-options="{'widget': 'date'}"/>
+                            </p>
+                        </div>
+                        <hr style="border-top: 3px solid #e74c3c;"/>
+
+                        <!-- Key Metrics -->
+                        <div class="row mt-4">
+                            <div class="col-3 text-center">
+                                <div style="border: 2px solid #3498db; border-radius: 10px; padding: 15px; background: #eaf2f8;">
+                                    <p style="color: #7f8c8d; margin-bottom: 5px; font-size: 12px;">RECORDS ANALYZED</p>
+                                    <h3 style="color: #2c3e50; margin: 0;">
+                                        <t t-esc="doc.record_count"/>
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="col-3 text-center">
+                                <div style="border: 2px solid #27ae60; border-radius: 10px; padding: 15px; background: #eafaf1;">
+                                    <p style="color: #7f8c8d; margin-bottom: 5px; font-size: 12px;">AVG YIELD</p>
+                                    <h3 style="color: #27ae60; margin: 0;">
+                                        <t t-esc="'%.1f%%' % doc.avg_yield_pct"/>
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="col-3 text-center">
+                                <div style="border: 2px solid #e74c3c; border-radius: 10px; padding: 15px; background: #fdedec;">
+                                    <p style="color: #7f8c8d; margin-bottom: 5px; font-size: 12px;">TOTAL LOSS COST</p>
+                                    <h3 style="color: #e74c3c; margin: 0;">
+                                        <t t-esc="'%.2f' % doc.total_loss_cost"/>
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="col-3 text-center">
+                                <div t-attf-style="border: 2px solid #{doc.copq_percentage > 10 and '#e74c3c' or doc.copq_percentage > 5 and '#f39c12' or '#27ae60'}; border-radius: 10px; padding: 15px; background: #{doc.copq_percentage > 10 and '#fdedec' or doc.copq_percentage > 5 and '#fef9e7' or '#eafaf1'};">
+                                    <p style="color: #7f8c8d; margin-bottom: 5px; font-size: 12px;">COPQ %</p>
+                                    <h3 t-attf-style="color: #{doc.copq_percentage > 10 and '#e74c3c' or doc.copq_percentage > 5 and '#f39c12' or '#27ae60'}; margin: 0;">
+                                        <t t-esc="'%.2f%%' % doc.copq_percentage"/>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quantity Summary -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h4 style="color: #2c3e50;">Production Summary</h4>
+                                <table class="table table-sm table-bordered">
+                                    <tr style="background-color: #2c3e50; color: white;">
+                                        <th>Total Input Qty</th>
+                                        <th>Total Output Qty</th>
+                                        <th>Total Loss Qty</th>
+                                        <th>Total Input Cost</th>
+                                        <th>Total Loss Cost</th>
+                                    </tr>
+                                    <tr class="text-right">
+                                        <td><t t-esc="'%.2f' % doc.total_input_qty"/></td>
+                                        <td><t t-esc="'%.2f' % doc.total_output_qty"/></td>
+                                        <td style="color: #e74c3c; font-weight: bold;">
+                                            <t t-esc="'%.2f' % doc.total_loss_qty"/>
+                                        </td>
+                                        <td><t t-esc="'%.2f' % doc.total_input_cost"/></td>
+                                        <td style="color: #e74c3c; font-weight: bold;">
+                                            <t t-esc="'%.2f' % doc.total_loss_cost"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Summary by Loss Type -->
+                        <t t-if="doc.summary_ids">
+                            <h4 style="color: #2c3e50; margin-top: 20px;">
+                                Loss Analysis by Type
+                            </h4>
+                            <table class="table table-sm table-bordered">
+                                <thead style="background-color: #8e44ad; color: white;">
+                                    <tr>
+                                        <th>Loss Type</th>
+                                        <th>Category</th>
+                                        <th class="text-right">Occurrences</th>
+                                        <th class="text-right">Total Loss Qty</th>
+                                        <th class="text-right">Total Loss Cost</th>
+                                        <th class="text-right">COPQ Contribution %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.summary_ids" t-as="summary">
+                                        <tr>
+                                            <td><t t-esc="summary.loss_type_id.name"/></td>
+                                            <td><t t-esc="summary.loss_category"/></td>
+                                            <td class="text-right"><t t-esc="summary.occurrence_count"/></td>
+                                            <td class="text-right">
+                                                <t t-esc="'%.2f' % summary.total_loss_qty"/>
+                                            </td>
+                                            <td class="text-right" style="color: #e74c3c;">
+                                                <t t-esc="'%.2f' % summary.total_loss_cost"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <t t-esc="'%.1f%%' % summary.copq_contribution_pct"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- Detail Lines (first 50) -->
+                        <t t-if="doc.line_ids">
+                            <h4 style="color: #2c3e50; margin-top: 25px;">
+                                Detailed Records
+                                <span style="font-size: 14px; color: #95a5a6;">
+                                    (showing up to 50 records)
+                                </span>
+                            </h4>
+                            <table class="table table-sm table-bordered" style="font-size: 11px;">
+                                <thead style="background-color: #2c3e50; color: white;">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>MO</th>
+                                        <th>Product</th>
+                                        <th>Grade</th>
+                                        <th>Step</th>
+                                        <th class="text-right">Input</th>
+                                        <th class="text-right">Output</th>
+                                        <th class="text-right">Loss</th>
+                                        <th class="text-right">Yield %</th>
+                                        <th class="text-right">Var %</th>
+                                        <th class="text-right">Loss Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.line_ids[:50]" t-as="line">
+                                        <tr t-attf-style="#{line.yield_variance &lt; -5 and 'background-color: #fdedec;' or ''}">
+                                            <td><t t-esc="line.date" t-options="{'widget': 'date'}"/></td>
+                                            <td><t t-esc="line.production_id.name or '-'"/></td>
+                                            <td><t t-esc="line.product_id.name"/></td>
+                                            <td><t t-esc="line.material_grade or '-'"/></td>
+                                            <td><t t-esc="line.process_step_id.name"/></td>
+                                            <td class="text-right"><t t-esc="'%.1f' % line.input_qty"/></td>
+                                            <td class="text-right"><t t-esc="'%.1f' % line.output_qty"/></td>
+                                            <td class="text-right" style="color: #e74c3c;">
+                                                <t t-esc="'%.1f' % line.loss_qty"/>
+                                            </td>
+                                            <td class="text-right"><t t-esc="'%.1f%%' % line.actual_yield_pct"/></td>
+                                            <td class="text-right" t-attf-style="color: #{line.yield_variance &lt; 0 and '#e74c3c' or '#27ae60'};">
+                                                <t t-esc="'%+.1f%%' % line.yield_variance"/>
+                                            </td>
+                                            <td class="text-right" style="color: #e74c3c;">
+                                                <t t-esc="'%.2f' % line.loss_cost"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- Notes -->
+                        <t t-if="doc.notes">
+                            <h4 style="color: #2c3e50; margin-top: 20px;">
+                                Notes &amp; Pricing Recommendations
+                            </h4>
+                            <div style="border-left: 4px solid #3498db; padding: 10px; background: #eaf2f8;">
+                                <t t-esc="doc.notes"/>
+                            </div>
+                        </t>
+
+                        <!-- Footer Note -->
+                        <div style="margin-top: 30px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 11px; color: #7f8c8d;">
+                            <p style="margin: 0;">
+                                <strong>Note:</strong> This COPQ report is intended to support pricing decisions
+                                by quantifying the cost impact of yield losses. Yield-adjusted costs should be
+                                used when setting product prices to ensure loss recovery.
+                            </p>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
